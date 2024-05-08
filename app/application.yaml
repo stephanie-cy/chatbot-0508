@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chatbot-0508
+  namespace: rhtap
+  labels:
+    argocd/app-name: chatbot-0508
+    janus-idp.io/tekton: chatbot-0508
+    backstage.io/kubernetes-id: chatbot-0508
+    backstage.io/kubernetes-namespace: chatbot-0508 
+    app.kubernetes.io/part-of: chatbot-0508
+  finalizers: ["resources-finalizer.argocd.argoproj.io"] 
+spec:
+  project: default
+  source:
+    path: ./app/base
+    repoURL: https://github.com/stephanie-cy/chatbot-0508.git
+    targetRevision: main
+  destination:
+    namespace: chatbot-0508
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels: 
+        argocd.argoproj.io/managed-by: rhtap
+    automated: 
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
